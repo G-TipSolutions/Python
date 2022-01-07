@@ -4,7 +4,7 @@ import smtplib
 import time
 
 MY_EMAIL = "bgshocker@gmail.com"
-MY_PASSWORD = "ZiPPerHead07!"
+MY_PASSWORD = "xxxxxxxxxxxxxx"
 MY_LAT = 49.156490
 MY_LONG = 8.983040
 
