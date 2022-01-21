@@ -1,0 +1,41 @@
+import requests
+from twilio.rest import Client
+from twilio.http.http_client import TwilioHttpClient
+import os
+
+OWM_Endpoint = "https://api.openweathermap.org/data/2.5/onecall"
+api_key = "80b1749xxxxxxxxxxxxxb4b1c29"
+account_sid = "AC2b1159xxxxxxxxxxxx72e10bedf256"
+auth_token = "2806face82xxxxxxxxxxxxxx0c9f3b755b02"
+
+weather_params = {
+    "lat": "32.800768",
+    "lon": "-97.058816",
+    "appid": api_key,
+    "exclude": "current,minutely,daily"
+}
+
+response = requests.get(OWM_Endpoint, params=weather_params)
+response.raise_for_status()
+weather_data = response.json()
+weather_slice = weather_data["hourly"][:12]
+
+will_thunder = False
+
+for hour_data in weather_slice:
+    condition_code = hour_data["weather"][0]["id"]
+    if int(condition_code) < 234:
+        will_thunder = True
+
+if will_thunder:
+    proxy_client = TwilioHttpClient()
+    proxy_client.session.proxies = {'https': os.environ['https_proxy']}
+
+    client = Client(account_sid, auth_token, http_client=proxy_client)
+    message = client.messages \
+        .create(
+        body="There is going to be Thunder and Lightning today. Fuck yea!!",
+        from_="+18647131884",
+        to="+19719987687"
+    )
+    print(message.status)
